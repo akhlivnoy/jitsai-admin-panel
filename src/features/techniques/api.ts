@@ -14,18 +14,25 @@ export type Technique = {
 
 export type TechniqueMutationType = 'insert' | 'update' | 'remove';
 
-export type MutationPayload =
-  | {
-      id?: string;
-      name: string;
-      aliases?: string[] | null;
-      category?: string | null;
-      category_name?: string | null;
-      description?: string | null;
-      history?: string | null;
-      modern_usage?: string | null;
-    }
-  | { id: string };
+export type InsertPayload = {
+  name: string;
+  aliases?: string[] | null;
+  category?: string | null;
+  category_name?: string | null;
+  description?: string | null;
+  history?: string | null;
+  modern_usage?: string | null;
+};
+
+export type UpdatePayload = Partial<InsertPayload> & {
+  id: string;
+};
+
+export type RemovePayload = {
+  id: string;
+};
+
+export type MutationPayload = InsertPayload | UpdatePayload | RemovePayload;
 
 export const PAGE_SIZE = 20;
 

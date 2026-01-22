@@ -1,5 +1,5 @@
 import { type FormEvent, useState } from 'react';
-import { callTechniquesAdmin, type Technique, type MutationPayload } from './api';
+import { callTechniquesAdmin, type Technique, type UpdatePayload } from './api';
 
 const CATEGORY_OPTIONS = [
   { category: 'guard', category_name: 'Guards' },
@@ -56,7 +56,7 @@ export function TechniqueCreateEditPage({ item, onSuccess, onCancel }: CreateEdi
     try {
       if (isEditing) {
         // Build payload with only changed fields
-        const payload: MutationPayload = { id: item!.id };
+        const payload: UpdatePayload = { id: item!.id };
 
         // Compare arrays by stringifying them for simplicity
         const aliasesChanged =

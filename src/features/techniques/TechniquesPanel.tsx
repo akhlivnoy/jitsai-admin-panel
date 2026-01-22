@@ -1,4 +1,4 @@
-import { type FormEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { callTechniquesAdmin, searchTechniques, PAGE_SIZE, type Technique } from './api';
 import { TechniqueCreateEditPage } from './TechniqueCreateEditPage';
 
