@@ -10,17 +10,19 @@ export function TechniquesPanel() {
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [search, setSearch] = useState('');
+  const [query, setQuery] = useState(search);
   const [editingItem, setEditingItem] = useState<Technique | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const observerTarget = useRef<HTMLDivElement>(null);
 
-  async function load(resetList = true) {
+  async function load(resetList = true, searchOverride?: string) {
     if (!resetList && loadingMore) return;
     (resetList ? setLoading : setLoadingMore)(true);
     setError(null);
     try {
       const newOffset = resetList ? 0 : offset;
-      const data = await searchTechniques(search, null, PAGE_SIZE, newOffset);
+      const q = typeof searchOverride === 'string' ? searchOverride : search;
+      const data = await searchTechniques(q, null, PAGE_SIZE, newOffset);
       const isFullPage = data.length === PAGE_SIZE;
       setHasMore(isFullPage);
       if (resetList) {
@@ -44,6 +46,12 @@ export function TechniquesPanel() {
     setHasMore(true);
     load(true);
   }, [search]);
+
+  // Debounce updates to `search` while typing in the input.
+  useEffect(() => {
+    const t = setTimeout(() => setSearch(query), 350);
+    return () => clearTimeout(t);
+  }, [query]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -105,15 +113,18 @@ export function TechniquesPanel() {
           <div className="mt-3 flex-row">
             <input
               type="text"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
+              value={query}
+              onChange={e => setQuery(e.target.value)}
               placeholder="Search techniques..."
               className="w-full max-w-2xl rounded-md border border-gray-300 px-4 py-3 text-base focus:border-blue-500 focus:outline-none"
             />
             <div className="flex items-start gap-2 ml-4">
               <button
                 type="button"
-                onClick={() => load(true)}
+                onClick={() => {
+                  setSearch(query);
+                  void load(true, query);
+                }}
                 className="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium hover:bg-gray-50 text-white"
                 disabled={loading}
               >
